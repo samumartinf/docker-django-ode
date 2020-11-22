@@ -1,0 +1,11 @@
+/venv/
+/media/experiments/*
+/media/results/*
+/.vscode/
+
+*.pyc
+*.pyo
+*.prod
+*.db
+/.idea/
+/.ipynb_checkpoints/

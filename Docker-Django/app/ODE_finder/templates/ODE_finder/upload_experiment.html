@@ -1,0 +1,25 @@
+
+{% extends 'ODE_finder/base.html' %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block content %}
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-size-1 has-text-centered">Upload Experiment</h1>
+        <p class="subtitle has-text-centered" id="progress-title"></p>
+        <div class="columns is-centered">
+          <div class="column is-8">
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {{ form|crispy }}
+              <button type="submit" class="button is-large is-link">Upload</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% endblock %}

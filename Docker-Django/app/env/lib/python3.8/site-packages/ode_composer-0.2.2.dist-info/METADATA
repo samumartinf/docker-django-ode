@@ -1,0 +1,19 @@
+Metadata-Version: 2.1
+Name: ode-composer
+Version: 0.2.2
+Summary: Building ODE models from data
+Home-page: https://github.com/zoltuz/ode_composer_py
+Author: Zoltan A Tuza
+Author-email: zoltuz@gmail.com
+License: MIT
+Platform: UNKNOWN
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: sympy
+Requires-Dist: matplotlib
+Requires-Dist: cvxpy
+Requires-Dist: sklearn
+
+UNKNOWN
+
+

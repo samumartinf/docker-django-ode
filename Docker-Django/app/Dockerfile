@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.7-slim
+FROM python:3.8-slim
 
 # set work directory
 WORKDIR /usr/src/app
@@ -18,8 +18,6 @@ RUN pip install --upgrade pip setuptools wheel
 COPY ./requirements.txt .
 
 # Fixing requiring numpy and pandas in alpine
-# RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install cvxpy
 RUN pip install -r requirements.txt
 
 # copy entrypoint.sh

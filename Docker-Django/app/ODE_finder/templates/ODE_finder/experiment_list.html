@@ -1,0 +1,59 @@
+{% extends 'ODE_finder/base.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block content %}
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-size-1 has-text-centered">Experiments List</h1>
+        <p class="subtitle has-text-centered" id="progress-title"></p>
+        <div class="columns is-centered">
+          <div class="column is-8">
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Experiment</th>
+                        <th>Results</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for experiment in experiments %}
+                    <tr>
+                        <td>{{ experiment.title }}</td>
+                        <td>{{ experiment.author }}</td>
+                        <td>
+                            <a href="{{ experiment.csv_file.url }}" class="button is-link" target="_blank" download>
+                                Download .csv
+                            </a>
+                        </td>
+                        <td>
+                            {% for result in results %}
+                            {% if result.experiment == experiment %}
+                            <a href="{{ result.result_file.url }}" class="button is-info" target="_blank" download>
+                                Download {{result.title}}
+                            </a>
+                            {% endif %}
+                            {% endfor %}
+
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'delete_experiment' experiment.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="button is-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}

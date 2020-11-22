@@ -1,0 +1,122 @@
+{% extends 'ODE_finder/plotting.html' %}
+
+{% load widget_tweaks %}
+{% load static %}
+
+
+{% block content %}
+
+{% if items %}
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script type='text/javascript'>
+  var people = {{ items_json|safe }};
+  console.log(people)
+</script>
+
+{% if task_id %}
+<script>
+    var task = {{ task|safe }};
+    console.log(task)
+</script>
+
+{% else %}
+<script>
+    var task = {'task_id': 'None'};
+</script>
+{% endif %}
+
+<div class="hero-body">
+    <div class="container">
+      <h1 class="title is-size-1 has-text-centered">Results</h1>
+        {% if ode_string %}
+          <div class="columns is-centered">
+              <h3 class="title is-size-4">{{ ode_string|linebreaks }}</h3>
+          </div>
+        {% endif %}
+      <p class="subtitle has-text-centered" id="progress-title"></p>
+      <div class="columns is-centered">
+        {% if div %}
+        {{ div|safe }}
+
+        {% else %}
+        <h2 class="title is-size-2">Reload page</h2>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  {% if div %}
+  {{ script|safe }}
+  {% endif %}
+
+
+
+<div id="app">
+  [[message]]
+
+  <ul>
+    <li v-for="person in people">
+      <a v-bind:href="person.url">[[ person.name ]]</a><a v-on:click="greet(person.name)" @click="vote(person)" class="button is-dark">Vote and greet</a>
+      <p>Votes: [[ person.votes ]]</p>
+    </li>
+  </ul>
+
+</div>
+
+
+
+<script>
+  var app = new Vue({
+    delimiters: ['[[', ']]'],
+    el: '#app',
+    data: {
+        message: 'Hello Vue!',
+        people: people,
+        task: task,
+        graph_div: null,
+        graph_script: null,
+        ode_string: "temp",
+    },
+    methods: {
+        greet: function(name) {
+            console.log('Hello from ' + name + '!')
+            console.log(task.task_id)
+        },
+        vote: function(person) {
+            person.votes ++
+            // Change database or update actual database somehow (API call?)
+        },
+    }, 
+    mounted () {
+        var taskUrl = "{% url 'task' task_id=task_id %}";
+        console.log(task.task_status)
+        if (task.task_status !== "SUCCESS"){
+            var timer = setInterval(function() {
+                axios
+                .get(taskUrl)
+                .then(response => {
+                    // console.log(response)
+                    var taskStatus = response.data.task_status
+                    if (taskStatus === "SUCCESS") {
+                        console.log("success")
+                        location.reload()
+                    } else if (taskStatus === 'FAILURE') {
+                        console.log('Failure in task')
+                    } else if (taskStatus === 'PENDING') {
+                        console.log("pending")
+                    }
+                })
+                .catch(function(err){
+                    console.log('err', err);
+                });
+            }, 800);
+        }
+    },
+  });
+</script>
+{% else %}
+<p>No items available.</p>
+{% endif %}
+
+{% endblock %}
