@@ -12,7 +12,44 @@ from bokeh.palettes import Category20
 from bokeh.models import HoverTool
 import random
 import json
+import numpy as np
+import pandas as pd
 
+
+def home(request):
+    time = np.arange(1000)/500
+    parabola = time ** 2
+    line = time
+    context={}
+
+    ode_model = 'dx/dt = 2x\ndy/dt = 1'
+
+    data_dict = {
+        'time': time,
+        'x**2': parabola,
+        'x': line
+    }
+    df = pd.DataFrame(data_dict)
+    html_table = df.to_html(classes=['table', 'table-striped', 'table-sm', 'table-hover'])
+
+    plot = figure(
+        x_axis_label='Time',
+        y_axis_label='Value',
+        plot_width=1200,
+        plot_height=550,
+    )
+    plot.title.text_font_size='16pt'
+    plot.line(time, line, legend_label="y=x", line_width=2.0)
+    plot.line(time, parabola, legend_label='y=x^2', color='orange', line_width=2.0)
+
+    script, div = components(plot)
+    context = {
+        'script': script,
+        'div': div,
+        'table': html_table,
+        'ode_model': ode_model,
+    }
+    return render(request, "ODE_finder/Example_dashboard.html",context)
 
 def delete_experiment(request, pk):
     if request.method == "POST":
@@ -25,7 +62,7 @@ def experiment_list(request):
     experiments = Experiment.objects.all()
     results = SimulationResult.objects.all()
 
-    return render(request, 'ODE_finder/experiment_list.html', {
+    return render(request, 'ODE_finder/Bootstrap_experiment_list.html', {
         'experiments': experiments,
         'results': results
     })
@@ -72,7 +109,8 @@ def upload_experiment(request):
     else:
         form = ExperimentForm()
 
-    return render(request, 'ODE_finder/upload_experiment.html', {
+# TODO: Migrate this from test_old to the new html template
+    return render(request, 'ODE_finder/Bootstrap_upload.html', {
         'form': form
     })
 

@@ -1,0 +1,99 @@
+{% extends 'ODE_finder/Bootstrap_dashboard.html' %}
+
+{% load widget_tweaks %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block nested_content %}
+
+<!-- SIDEBAR -->
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+  <div class="sidebar-sticky">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'home' %}">
+          <span data-feather="terminal"></span>
+          Main 
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'experiment_list' %}">
+          <span data-feather="database"></span>
+          experiements <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <span data-feather="bar-chart-2"></span>
+          Reports
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'upload_experiment' %}">
+          <span data-feather="upload"></span>
+          Upload Experiment
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<!-- SIDEBAR -->
+
+<!-- Beginning of Dashboard -->
+  <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title is-size-1 has-text-centered">Experiments List</h1>
+        <p class="subtitle has-text-centered" id="progress-title"></p>
+        <div class="columns is-centered">
+          <div class="column is-8">
+
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Experiment</th>
+                        <th>Results</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for experiment in experiments %}
+                    <tr>
+                        <td>{{ experiment.title }}</td>
+                        <td>{{ experiment.author }}</td>
+                        <td>
+                            <a href="{{ experiment.csv_file.url }}" class="btn btn-secondary" target="_blank" download>
+                                Download .csv
+                            </a>
+                        </td>
+                        <td>
+                            {% for result in results %}
+                            {% if result.experiment == experiment %}
+                            <a href="{{ result.result_file.url }}" class="btn btn-primary" target="_blank" download>
+                                Download {{result.title}}
+                            </a>
+                            {% endif %}
+                            {% endfor %}
+
+                        </td>
+                        <td>
+                            <form method="post" action="{% url 'delete_experiment' experiment.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- End of Dashboard -->
+
+
+{% endblock %}

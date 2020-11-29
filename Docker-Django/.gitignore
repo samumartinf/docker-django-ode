@@ -7,5 +7,6 @@
 *.pyo
 *.prod
 *.db
+*.csv
 /.idea/
 /.ipynb_checkpoints/

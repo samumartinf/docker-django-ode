@@ -1,0 +1,116 @@
+{% extends 'ODE_finder/Bootstrap_dashboard.html' %}
+
+{% block nested_content %}
+<!-- SIDEBAR -->
+<nav class="col-md-2 d-none d-md-block bg-light sidebar">
+  <div class="sidebar-sticky">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a class="nav-link active" href="{% url 'home' %}">
+          <span data-feather="terminal"></span>
+          Main <span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'experiment_list' %}">
+          <span data-feather="database"></span>
+          experiements
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">
+          <span data-feather="bar-chart-2"></span>
+          Reports
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'upload_experiment' %}">
+          <span data-feather="upload"></span>
+          Upload Experiment
+        </a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<!-- SIDEBAR -->
+
+<!-- Beginning of Dashboard -->
+  <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+      <h1 class="h2">Results and model</h1>
+      <div class="btn-toolbar mb-2 mb-md-0">
+        <div class="btn-group mr-2">
+          <button class="btn btn-sm btn-outline-secondary">Import .csv</button>
+          <button class="btn btn-sm btn-outline-secondary">Export</button>
+        </div>
+
+        <!-- Dropdown button -->
+        <!-- TODO: Make button change experiment and make button retrieve last three experiements -->
+        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span data-feather="bar-chart"></span>
+          Experiment 1
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="#">Experiment 2</a>
+            <a class="dropdown-item" href="#">Experiment 3</a>
+        </div>
+        
+
+        <!-- End dropdown button -->
+      </div>
+    </div>
+
+    <h2>ODE plot</h2>
+    <!-- Bokeh graph -->
+    {% if div %}
+    {{ div|safe }}
+    {% endif %}
+
+    {% if div %}
+    {{ script|safe }}
+    {% endif %}
+    <!-- Bokeh graph -->
+
+    
+    <!-- Ode model and formula -->
+    <h2>ODE formula</h2>
+    <!-- TODO: make this depend on the dropdown && Improve the looks of this -->
+    <div class="card" style="width: 18rem;">
+      <div class="card-body">
+          <h4>
+            {% if ode_model %}
+            {{ ode_model|linebreaks }}
+            {% endif %}
+          </h4>
+      </div>
+    </div>
+    <!-- End of ode model and formula -->
+
+    <!-- Collapsable data collection -->
+    <h2>Data</h2>
+    <div class="accordion" id="accordionExample">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h2 class="mb-0">
+            <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+              Show Data
+              <span data-feather="arrow-down"></span>
+            </button>
+          </h2>
+        </div>
+    
+        <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+          <div class="card-body">
+              {% if table %}
+              {{ table|safe }}
+              {% endif %}
+          </div>
+        </div>
+      </div>
+    <!-- End of table data -->
+    
+  </main>
+  <!-- End of Dashboard -->
+
+
+{% endblock %}
