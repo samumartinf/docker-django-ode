@@ -5,7 +5,6 @@
 {% load static %}
 
 {% block nested_content %}
-
 <!-- SIDEBAR -->
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
   <div class="sidebar-sticky">
@@ -19,13 +18,13 @@
       <li class="nav-item">
         <a class="nav-link active" href="{% url 'experiment_list' %}">
           <span data-feather="database"></span>
-          experiements <span class="sr-only">(current)</span>
+          Experiments <span class="sr-only">(current)</span>
         </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{% url 'simulation_config' %}">
           <span data-feather="bar-chart-2"></span>
-          Reports
+          New Simulation 
         </a>
       </li>
       <li class="nav-item">

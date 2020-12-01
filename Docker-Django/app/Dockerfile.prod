@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.7-slim as builder
+FROM python:3.8-slim as builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -33,13 +33,13 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.8.3-alpine
+FROM python:3.8-slim
 
 # create directory for the app user
 RUN mkdir -p /home/app
 
-# create the app user
-RUN addgroup -S app && adduser -S app -G app
+# create the app user - prevents intruders in the network from getting root access
+RUN groupadd app && useradd -g app app
 
 # create the appropriate directories
 ENV HOME=/home/app
@@ -47,8 +47,10 @@ ENV APP_HOME=/home/app/web
 RUN mkdir $APP_HOME
 WORKDIR $APP_HOME
 
-# install dependencies
-RUN apk update && apk add libpq
+# install dependencies - using the wheels by Builder
+RUN apt-get update && \
+    apt-get install -y gcc g++ netcat postgresql && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --no-cache /wheels/*

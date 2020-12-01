@@ -17,6 +17,7 @@ from ode_composer.statespace_model import StateSpaceModel
 from ode_composer.dictionary_builder import DictionaryBuilder
 from ode_composer.sbl import SBL
 import numpy as np
+import sympy as sym
 from ode_composer.signal_preprocessor import (
     GPSignalPreprocessor,
     SplineSignalPreprocessor,

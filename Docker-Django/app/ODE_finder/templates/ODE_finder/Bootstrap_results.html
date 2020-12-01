@@ -3,8 +3,23 @@
 {% load widget_tweaks %}
 {% load crispy_forms_tags %}
 {% load static %}
-
+  
 {% block nested_content %}
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+{% if task_id %}
+<script>
+  var task = {{ task|safe }};
+  console.log(task)
+</script>
+{% else %}
+<script>
+  var task = {'task_id': 'None'};
+</script>
+{% endif %}
+
 <!-- SIDEBAR -->
 <nav class="col-md-2 d-none d-md-block bg-light sidebar">
   <div class="sidebar-sticky">
@@ -38,6 +53,7 @@
 </nav>
 <!-- SIDEBAR -->
 
+{% if task %}
 <!-- Beginning of Dashboard -->
   <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -112,9 +128,59 @@
         </div>
       </div>
     <!-- End of table data -->
+
+      <!-- VUE fun stuff -->
+  <div id="app">
+  </div>
     
   </main>
-  <!-- End of Dashboard -->
 
 
+  <!-- Vue code in case I want to push this route -->
+  <script>
+    var app = new Vue({
+      delimiters: ['[[', ']]'],
+      el: '#app',
+      data: {
+          message: 'Hello Vue!',
+      },
+      mounted () {
+          var taskUrl = "{% url 'task' task_id=task_id %}";
+          console.log(task.task_status)
+          if (task.task_status !== "SUCCESS"){
+              var timer = setInterval(function() {
+                  axios
+                  .get(taskUrl)
+                  .then(response => {
+                      // console.log(response)
+                      var taskStatus = response.data.task_status
+                      if (taskStatus === "SUCCESS") {
+                          console.log("success")
+                          location.reload()
+                      } else if (taskStatus === 'FAILURE') {
+                          console.log('Failure in task')
+                      } else if (taskStatus === 'PENDING') {
+                          console.log("pending")
+                      }
+                  })
+                  .catch(function(err){
+                      console.log('err', err);
+                  });
+              }, 800);
+          }
+      },
+    });
+  </script>
+
+{% else %}
+<main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title is-size-1 has-text-centered">Waiting for results</h1>
+      <h2>Please wait while results are fetched</h2>
+    </div>
+  </div>
+</main>
+
+{% endif %}
 {% endblock %}

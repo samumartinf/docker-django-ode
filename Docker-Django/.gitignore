@@ -2,11 +2,13 @@
 /media/experiments/*
 /media/results/*
 /.vscode/
+/env/
 
 *.pyc
 *.pyo
 *.prod
-*.db
+*.env.prod
+*.env.prod.db
 *.csv
 /.idea/
 /.ipynb_checkpoints/

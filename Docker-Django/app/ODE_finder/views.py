@@ -15,6 +15,8 @@ import json
 import numpy as np
 import pandas as pd
 
+# Sympy simplification
+from sympy import sympify, simplify
 
 def home(request):
     time = np.arange(1000)/500
@@ -49,7 +51,7 @@ def home(request):
         'table': html_table,
         'ode_model': ode_model,
     }
-    return render(request, "ODE_finder/Example_dashboard.html",context)
+    return render(request, "ODE_finder/Bootstrap_home.html",context)
 
 def delete_experiment(request, pk):
     if request.method == "POST":
@@ -92,7 +94,7 @@ def simulation_config(request):
     else:
         form = SimulationForm()
 
-    return render(request, 'ODE_finder/simulation_config.html', {
+    return render(request, 'ODE_finder/Bootstrap_simulation_config.html', {
         'form': form
     })
 
@@ -150,7 +152,7 @@ def results_view(request):
 
         print(context['ode_string'])
 
-    return render(request, 'ODE_finder/results_view.html', context)
+    return render(request, 'ODE_finder/Bootstrap_home.html', context)
 
 
 def test_view(request):
@@ -161,7 +163,6 @@ def test_view(request):
         task_id = request.session['task_id']
         task = current_app.AsyncResult(request.session['task_id'])
         context['task_id'] = task.id
-        # context['task_status'] = task.status
         task_dict = {"task_id" : task_id, "task_status": task.status}
         context["task"] = json.dumps(task_dict)
     except:
@@ -171,9 +172,10 @@ def test_view(request):
         results_dict, ode_strings = task.get() #results is a dictionary and ode_strings
         time = results_dict['t']
         plot = figure(
-            title='Retrieved ODE',
             x_axis_label='Time',
             y_axis_label='Value',
+            plot_width=1200,
+            plot_height=550,
         )
         for key, color in zip(results_dict, Category20[len(results_dict.keys())]):
             if key != 't':
@@ -183,15 +185,16 @@ def test_view(request):
                     plot.line(time, results_dict[key], legend_label=f"{key}", color=color, line_width=2.0)
         plot.legend.location = "top_left"
         plot.legend.click_policy = "hide"
-        plot.sizing_mode = "stretch_both"
         script, div = components(plot)
+        df = pd.DataFrame(results_dict)
+        html_table = df.to_html(classes=['table', 'table-striped', 'table-sm', 'table-hover'])
+
         context['script'] = script
         context['div'] = div
-        context['ode_string'] = ode_strings
+        context['ode_model'] = ode_strings
+        context['table'] = html_table
 
-        print(context['ode_string'])
-
-    return render(request, 'ODE_finder/test.html', context)
+    return render(request, 'ODE_finder/Bootstrap_results.html', context)
 
 
 class TaskView(View):
